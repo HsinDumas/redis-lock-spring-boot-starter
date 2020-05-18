@@ -17,6 +17,6 @@ public enum LockModel {
   READ,
   // 写锁
   WRITE,
-  // 自动模式,当参数只有一个.使用 REENTRANT 参数多个 REDLOCK
+  // 自动模式,当参数只有一个.使用 REENTRANT 参数多个 RED_LOCK
   AUTO
 }

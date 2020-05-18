@@ -66,9 +66,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git@github.com/HsinDumas/redis-lock-boot-starter.git</connection>
-        <developerConnection>scm:git@github.com/HsinDumas/redis-lock-boot-starter.giti-spring-boot-starter.git</developerConnection>
-        <url>https://github.com/HsinDumas/redis-lock-boot-starter</url>
+        <connection>scm:git@github.com/HsinDumas/redis-lock-spring-boot-starter.git</connection>
+        <developerConnection>scm:git@github.com/HsinDumas/redis-lock-spring-boot-starter.git</developerConnection>
+        <url>https://github.com/HsinDumas/redis-lock-spring-boot-starter</url>
     </scm>
 
     <build>

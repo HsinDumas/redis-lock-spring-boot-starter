@@ -184,16 +184,16 @@ public class LockAop {
         }
         break;
       case READ:
-        RReadWriteLock rwlock =
+        RReadWriteLock readWriteLock =
             redissonClient.getReadWriteLock(
                 getValueBySpel(keys[0], parameterNames, args, lock.keyConstant()).get(0));
-        rLock = rwlock.readLock();
+        rLock = readWriteLock.readLock();
         break;
       case WRITE:
-        RReadWriteLock rwlock1 =
+        readWriteLock =
             redissonClient.getReadWriteLock(
                 getValueBySpel(keys[0], parameterNames, args, lock.keyConstant()).get(0));
-        rLock = rwlock1.writeLock();
+        rLock = readWriteLock.writeLock();
         break;
       default:
     }
