@@ -71,7 +71,7 @@ public class LockAop {
     Object value = expression.getValue(context);
     if (value != null) {
       if (value instanceof List) {
-        List value1 = (List) value;
+        List<?> value1 = (List<?>) value;
         for (Object o : value1) {
           keys.add("redisson:lock:" + o.toString() + keyConstant);
         }
