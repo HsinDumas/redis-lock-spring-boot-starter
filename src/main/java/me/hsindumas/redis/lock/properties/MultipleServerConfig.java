@@ -7,11 +7,10 @@ import org.redisson.config.SubscriptionMode;
 import java.util.ArrayList;
 import java.util.List;
 /**
- * The type Multiple server config.
+ * 多节点配置
  *
- * @apiNote 多节点配置
  * @author Zho.Xin
- * @date 2020 /5/18
+ * @since 2020 /5/18
  */
 @Data
 public class MultipleServerConfig {

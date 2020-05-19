@@ -1,7 +1,7 @@
 package me.hsindumas.redis.lock.enums;
 /**
  * @author Zho.Xin
- * @date 2020/5/18
+ * @since 2020/5/18
  */
 public enum Model {
   // 哨兵

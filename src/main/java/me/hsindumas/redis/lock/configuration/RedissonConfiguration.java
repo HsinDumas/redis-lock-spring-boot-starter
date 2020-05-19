@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
 /**
  * @author Zho.Xin
- * @date 2020/5/18
+ * @since 2020/5/18
  */
 @Configuration
 @EnableConfigurationProperties(RedissonProperties.class)

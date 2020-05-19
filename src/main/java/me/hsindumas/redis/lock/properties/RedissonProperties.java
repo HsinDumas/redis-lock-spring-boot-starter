@@ -12,7 +12,7 @@ import java.net.URL;
 
 /**
  * @author Zho.Xin
- * @date 2020/5/18
+ * @since 2020/5/18
  */
 @Data
 @ConfigurationProperties(prefix = "redisson")

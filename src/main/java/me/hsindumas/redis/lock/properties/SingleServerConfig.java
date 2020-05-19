@@ -3,9 +3,10 @@ package me.hsindumas.redis.lock.properties;
 import lombok.Data;
 
 /**
- * @apiNote 单节点配置
+ * 单节点配置
+ *
  * @author Zho.Xin
- * @date 2020/5/18
+ * @since 2020/5/18
  */
 @Data
 public class SingleServerConfig {
