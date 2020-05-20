@@ -27,6 +27,8 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 /**
  * @author Zho.Xin
  * @since 2020/5/18
@@ -140,10 +142,8 @@ public class LockAop {
       case RED_LOCK:
         List<RLock> rLocks = new ArrayList<>();
         for (String key : keys) {
-          List<String> vauleBySpel = getValueBySpel(key, parameterNames, args, lock.keyConstant());
-          for (String s : vauleBySpel) {
-            rLocks.add(redissonClient.getLock(s));
-          }
+          List<String> valueBySpel = getValueBySpel(key, parameterNames, args, lock.keyConstant());
+          rLocks = valueBySpel.stream().map(redissonClient::getLock).collect(Collectors.toList());
         }
         RLock[] locks = new RLock[rLocks.size()];
         int index = 0;
@@ -154,12 +154,9 @@ public class LockAop {
         break;
       case MULTIPLE:
         rLocks = new ArrayList<>();
-
         for (String key : keys) {
-          List<String> vauleBySpel = getValueBySpel(key, parameterNames, args, lock.keyConstant());
-          for (String s : vauleBySpel) {
-            rLocks.add(redissonClient.getLock(s));
-          }
+          List<String> valueBySpel = getValueBySpel(key, parameterNames, args, lock.keyConstant());
+          rLocks = valueBySpel.stream().map(redissonClient::getLock).collect(Collectors.toList());
         }
         locks = new RLock[rLocks.size()];
         index = 0;
@@ -169,15 +166,15 @@ public class LockAop {
         rLock = new RedissonMultiLock(locks);
         break;
       case REENTRANT:
-        List<String> vauleBySpel =
+        List<String> valueBySpel =
             getValueBySpel(keys[0], parameterNames, args, lock.keyConstant());
         // 如果spel表达式是数组或者LIST 则使用红锁
-        if (vauleBySpel.size() == 1) {
-          rLock = redissonClient.getLock(vauleBySpel.get(0));
+        if (valueBySpel.size() == 1) {
+          rLock = redissonClient.getLock(valueBySpel.get(0));
         } else {
-          locks = new RLock[vauleBySpel.size()];
+          locks = new RLock[valueBySpel.size()];
           index = 0;
-          for (String s : vauleBySpel) {
+          for (String s : valueBySpel) {
             locks[index++] = redissonClient.getLock(s);
           }
           rLock = new RedissonRedLock(locks);
@@ -211,7 +208,7 @@ public class LockAop {
         if (res) {
           return proceedingJoinPoint.proceed();
         } else {
-          throw new LockException("获取锁失败");
+          throw new LockException("请稍后再试~");
         }
       } finally {
         if (res) {
@@ -219,6 +216,6 @@ public class LockAop {
         }
       }
     }
-    throw new LockException("获取锁失败");
+    throw new LockException("请稍后再试~");
   }
 }
