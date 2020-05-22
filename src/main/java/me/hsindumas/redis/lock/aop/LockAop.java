@@ -1,6 +1,6 @@
 package me.hsindumas.redis.lock.aop;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.hsindumas.redis.lock.annotation.Lock;
 import me.hsindumas.redis.lock.enums.LockModel;
@@ -24,6 +24,7 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -36,10 +37,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Aspect
 @Order(-10)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class LockAop {
-  private final RedissonClient redissonClient;
   private final RedissonProperties redissonProperties;
+  @Resource private RedissonClient redissonClient;
 
   @Pointcut("@annotation(lock)")
   public void controllerAspect(Lock lock) {}

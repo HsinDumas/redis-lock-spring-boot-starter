@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
+
 /**
  * @author Zho.Xin
  * @since 2020/5/18
@@ -29,13 +30,12 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class RedissonConfiguration {
 
-  private final RedissonClient redissonClient;
   private final RedissonProperties redissonProperties;
 
   @Bean
   @ConditionalOnMissingBean(LockAop.class)
   public LockAop lockAop() {
-    return new LockAop(redissonClient, redissonProperties);
+    return new LockAop(redissonProperties);
   }
 
   @Bean
