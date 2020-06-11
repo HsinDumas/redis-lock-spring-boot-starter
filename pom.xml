@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.github.hsindumas</groupId>
     <artifactId>redis-lock-spring-boot-starter</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <name>redis-lock-spring-boot-starter</name>
     <packaging>jar</packaging>
 
@@ -35,7 +35,7 @@
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson-spring-boot-starter</artifactId>
-            <version>3.12.5</version>
+            <version>3.13.1</version>
         </dependency>
     </dependencies>
 
