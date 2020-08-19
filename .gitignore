@@ -1,6 +1,6 @@
 HELP.md
 target/
-!.mvn/
+.mvn/
 !**/src/main/**
 !**/src/test/**
 
@@ -29,5 +29,5 @@ build/
 
 ### VS Code ###
 .vscode/
-!/mvnw.cmd
-!/mvnw
+mvnw.cmd
+mvnw
