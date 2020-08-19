@@ -15,7 +15,7 @@ import java.net.URL;
  * @since 2020/5/18
  */
 @Data
-@ConfigurationProperties(prefix = "redisson")
+@ConfigurationProperties(prefix = "lock")
 public class RedissonProperties {
 
   private Model model = Model.SINGLE;
