@@ -4,7 +4,6 @@ import lombok.Data;
 import me.hsindumas.redis.lock.enums.LockModel;
 import me.hsindumas.redis.lock.enums.Model;
 import org.redisson.config.SslProvider;
-import org.redisson.config.TransportMode;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -19,21 +18,8 @@ import java.net.URL;
 public class RedissonProperties {
 
   private Model model = Model.SINGLE;
-  private String codec = "org.redisson.codec.JsonJacksonCodec";
-  private Integer threads;
-  private Integer nettyThreads;
-  private TransportMode transportMode = TransportMode.NIO;
 
-  /** 公共参数 */
-  private Integer idleConnectionTimeout = 10000;
-
-  private Integer pingTimeout = 1000;
-  private Integer connectTimeout = 10000;
-  private Integer timeout = 3000;
-  private Integer retryAttempts = 3;
-  private Integer retryInterval = 1500;
   private String password;
-  private Integer subscriptionsPerConnection = 5;
   private String clientName;
   private Boolean sslEnableEndpointIdentification = true;
   private SslProvider sslProvider = SslProvider.JDK;
@@ -42,9 +28,6 @@ public class RedissonProperties {
   private URL sslKeystore;
   private String sslKeystorePassword;
   private Integer pingConnectionInterval = 0;
-  private Boolean keepAlive = false;
-  private Boolean tcpNoDelay = false;
-  private Boolean referenceEnabled = true;
   private Long lockWatchdogTimeout = 30000L;
   private Boolean keepPubSubOrder = true;
   private Boolean decodeInExecutor = false;

@@ -43,7 +43,7 @@ public class CacheConfiguration implements ImportAware {
 
   @Bean
   CacheManager cacheManager() {
-    Map<String, CacheConfig> config = new HashMap<>();
+    Map<String, CacheConfig> config = new HashMap<>(16);
     for (String s : value) {
       log.info("初始化spring cache空间{}", s);
       config.put(s, new CacheConfig(ttl, maxIdleTime));
