@@ -17,8 +17,6 @@ public class LockProperties {
 
   private Model model = Model.SINGLE;
 
-  private String password;
-
   private URL sslTruststore;
   private String sslTruststorePassword;
   private URL sslKeystore;

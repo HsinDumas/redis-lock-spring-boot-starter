@@ -15,6 +15,7 @@ import org.redisson.config.ReplicatedServersConfig;
 import org.redisson.config.SentinelServersConfig;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,12 +25,13 @@ import org.springframework.context.annotation.Configuration;
  * @since 2020/5/18
  */
 @Configuration
-@EnableConfigurationProperties(LockProperties.class)
+@EnableConfigurationProperties({LockProperties.class, RedisProperties.class})
 @ConditionalOnClass(LockProperties.class)
 @RequiredArgsConstructor
 public class RedissonConfiguration {
 
   private final LockProperties lockProperties;
+  private final RedisProperties redisProperties;
 
   @Bean
   @ConditionalOnMissingBean(LockAop.class)
