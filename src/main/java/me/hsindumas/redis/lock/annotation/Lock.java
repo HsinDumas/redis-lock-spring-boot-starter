@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
 public @interface Lock {
 
   /**
-   * 锁的模式:如果不设置,自动模式,当参数只有一个.使用 REENTRANT 参数多个 MULTIPLE
+   * 锁的模式:默认情况下,当参数有多个使用 MULTIPLE 否则使用公平锁
    *
    * @return the lock model
    */
@@ -45,7 +45,7 @@ public @interface Lock {
    *
    * @return long long
    */
-  long lockWatchdogTimeout() default 0;
+  long lockTimeout() default 0;
 
   /**
    * 等待加锁超时时间,默认10000毫秒 -1 则表示一直等待(可在配置文件全局设置)

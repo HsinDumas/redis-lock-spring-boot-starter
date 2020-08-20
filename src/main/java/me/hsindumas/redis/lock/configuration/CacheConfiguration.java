@@ -3,7 +3,7 @@ package me.hsindumas.redis.lock.configuration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.hsindumas.redis.lock.annotation.EnableCache;
-import me.hsindumas.redis.lock.properties.RedissonProperties;
+import me.hsindumas.redis.lock.properties.LockProperties;
 import org.redisson.api.RedissonClient;
 import org.redisson.spring.cache.CacheConfig;
 import org.redisson.spring.cache.RedissonSpringCacheManager;
@@ -28,7 +28,7 @@ import java.util.Map;
 @Slf4j
 @Component
 @EnableCaching
-@EnableConfigurationProperties(value = RedissonProperties.class)
+@EnableConfigurationProperties(value = LockProperties.class)
 @RequiredArgsConstructor
 public class CacheConfiguration implements ImportAware {
   private String[] value;

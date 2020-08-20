@@ -2,8 +2,8 @@ package me.hsindumas.redis.lock.configuration;
 
 import lombok.RequiredArgsConstructor;
 import me.hsindumas.redis.lock.aop.LockAop;
+import me.hsindumas.redis.lock.properties.LockProperties;
 import me.hsindumas.redis.lock.properties.MultipleServerConfig;
-import me.hsindumas.redis.lock.properties.RedissonProperties;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.ClusterServersConfig;
@@ -24,37 +24,37 @@ import org.springframework.util.StringUtils;
  * @since 2020/5/18
  */
 @Configuration
-@EnableConfigurationProperties(RedissonProperties.class)
-@ConditionalOnClass(RedissonProperties.class)
+@EnableConfigurationProperties(LockProperties.class)
+@ConditionalOnClass(LockProperties.class)
 @RequiredArgsConstructor
 public class RedissonConfiguration {
 
-  private final RedissonProperties redissonProperties;
+  private final LockProperties lockProperties;
 
   @Bean
   @ConditionalOnMissingBean(LockAop.class)
   public LockAop lockAop() {
-    return new LockAop(redissonProperties);
+    return new LockAop(lockProperties);
   }
 
   @Bean
   @ConditionalOnMissingBean(RedissonClient.class)
   public RedissonClient redissonClient() {
     Config config = new Config();
-    config.setLockWatchdogTimeout(redissonProperties.getLockWatchdogTimeout());
-    config.setKeepPubSubOrder(redissonProperties.getKeepPubSubOrder());
-    config.setUseScriptCache(redissonProperties.getUseScriptCache());
-    config.setMinCleanUpDelay(redissonProperties.getMinCleanUpDelay());
-    config.setMaxCleanUpDelay(redissonProperties.getMaxCleanUpDelay());
+    config.setLockWatchdogTimeout(lockProperties.getLockWatchdogTimeout());
+    config.setKeepPubSubOrder(lockProperties.getKeepPubSubOrder());
+    config.setUseScriptCache(lockProperties.getUseScriptCache());
+    config.setMinCleanUpDelay(lockProperties.getMinCleanUpDelay());
+    config.setMaxCleanUpDelay(lockProperties.getMaxCleanUpDelay());
     config = new Config(config);
 
-    MultipleServerConfig multipleServerConfig = redissonProperties.getMultipleServerConfig();
+    MultipleServerConfig multipleServerConfig = lockProperties.getMultipleServerConfig();
 
-    switch (redissonProperties.getModel()) {
+    switch (lockProperties.getModel()) {
       case SINGLE:
         org.redisson.config.SingleServerConfig singleServerConfig = config.useSingleServer();
         me.hsindumas.redis.lock.properties.SingleServerConfig param =
-            redissonProperties.getSingleServerConfig();
+            lockProperties.getSingleServerConfig();
         singleServerConfig.setAddress(prefixAddress(param.getAddress()));
         singleServerConfig.setConnectionMinimumIdleSize(param.getConnectionMinimumIdleSize());
         singleServerConfig.setConnectionPoolSize(param.getConnectionPoolSize());
@@ -64,17 +64,16 @@ public class RedissonConfiguration {
             param.getSubscriptionConnectionMinimumIdleSize());
         singleServerConfig.setSubscriptionConnectionPoolSize(
             param.getSubscriptionConnectionPoolSize());
-        singleServerConfig.setClientName(redissonProperties.getClientName());
-        singleServerConfig.setPassword(redissonProperties.getPassword());
-        singleServerConfig.setPingConnectionInterval(
-            redissonProperties.getPingConnectionInterval());
+        singleServerConfig.setClientName(lockProperties.getClientName());
+        singleServerConfig.setPassword(lockProperties.getPassword());
+        singleServerConfig.setPingConnectionInterval(lockProperties.getPingConnectionInterval());
         singleServerConfig.setSslEnableEndpointIdentification(
-            redissonProperties.getSslEnableEndpointIdentification());
-        singleServerConfig.setSslKeystore(redissonProperties.getSslKeystore());
-        singleServerConfig.setSslKeystorePassword(redissonProperties.getSslKeystorePassword());
-        singleServerConfig.setSslProvider(redissonProperties.getSslProvider());
-        singleServerConfig.setSslTruststore(redissonProperties.getSslTruststore());
-        singleServerConfig.setSslTruststorePassword(redissonProperties.getSslTruststorePassword());
+            lockProperties.getSslEnableEndpointIdentification());
+        singleServerConfig.setSslKeystore(lockProperties.getSslKeystore());
+        singleServerConfig.setSslKeystorePassword(lockProperties.getSslKeystorePassword());
+        singleServerConfig.setSslProvider(lockProperties.getSslProvider());
+        singleServerConfig.setSslTruststore(lockProperties.getSslTruststore());
+        singleServerConfig.setSslTruststorePassword(lockProperties.getSslTruststorePassword());
         break;
       case CLUSTER:
         ClusterServersConfig clusterServersConfig = config.useClusterServers();
@@ -108,18 +107,16 @@ public class RedissonConfiguration {
         for (String nodeAddress : multipleServerConfig.getNodeAddresses()) {
           clusterServersConfig.addNodeAddress(prefixAddress(nodeAddress));
         }
-        clusterServersConfig.setClientName(redissonProperties.getClientName());
-        clusterServersConfig.setPassword(redissonProperties.getPassword());
-        clusterServersConfig.setPingConnectionInterval(
-            redissonProperties.getPingConnectionInterval());
+        clusterServersConfig.setClientName(lockProperties.getClientName());
+        clusterServersConfig.setPassword(lockProperties.getPassword());
+        clusterServersConfig.setPingConnectionInterval(lockProperties.getPingConnectionInterval());
         clusterServersConfig.setSslEnableEndpointIdentification(
-            redissonProperties.getSslEnableEndpointIdentification());
-        clusterServersConfig.setSslKeystore(redissonProperties.getSslKeystore());
-        clusterServersConfig.setSslKeystorePassword(redissonProperties.getSslKeystorePassword());
-        clusterServersConfig.setSslProvider(redissonProperties.getSslProvider());
-        clusterServersConfig.setSslTruststore(redissonProperties.getSslTruststore());
-        clusterServersConfig.setSslTruststorePassword(
-            redissonProperties.getSslTruststorePassword());
+            lockProperties.getSslEnableEndpointIdentification());
+        clusterServersConfig.setSslKeystore(lockProperties.getSslKeystore());
+        clusterServersConfig.setSslKeystorePassword(lockProperties.getSslKeystorePassword());
+        clusterServersConfig.setSslProvider(lockProperties.getSslProvider());
+        clusterServersConfig.setSslTruststore(lockProperties.getSslTruststore());
+        clusterServersConfig.setSslTruststorePassword(lockProperties.getSslTruststorePassword());
         break;
       case SENTINEL:
         SentinelServersConfig sentinelServersConfig = config.useSentinelServers();
@@ -155,18 +152,16 @@ public class RedissonConfiguration {
         for (String nodeAddress : multipleServerConfig.getNodeAddresses()) {
           sentinelServersConfig.addSentinelAddress(prefixAddress(nodeAddress));
         }
-        sentinelServersConfig.setClientName(redissonProperties.getClientName());
-        sentinelServersConfig.setPassword(redissonProperties.getPassword());
-        sentinelServersConfig.setPingConnectionInterval(
-            redissonProperties.getPingConnectionInterval());
+        sentinelServersConfig.setClientName(lockProperties.getClientName());
+        sentinelServersConfig.setPassword(lockProperties.getPassword());
+        sentinelServersConfig.setPingConnectionInterval(lockProperties.getPingConnectionInterval());
         sentinelServersConfig.setSslEnableEndpointIdentification(
-            redissonProperties.getSslEnableEndpointIdentification());
-        sentinelServersConfig.setSslKeystore(redissonProperties.getSslKeystore());
-        sentinelServersConfig.setSslKeystorePassword(redissonProperties.getSslKeystorePassword());
-        sentinelServersConfig.setSslProvider(redissonProperties.getSslProvider());
-        sentinelServersConfig.setSslTruststore(redissonProperties.getSslTruststore());
-        sentinelServersConfig.setSslTruststorePassword(
-            redissonProperties.getSslTruststorePassword());
+            lockProperties.getSslEnableEndpointIdentification());
+        sentinelServersConfig.setSslKeystore(lockProperties.getSslKeystore());
+        sentinelServersConfig.setSslKeystorePassword(lockProperties.getSslKeystorePassword());
+        sentinelServersConfig.setSslProvider(lockProperties.getSslProvider());
+        sentinelServersConfig.setSslTruststore(lockProperties.getSslTruststore());
+        sentinelServersConfig.setSslTruststorePassword(lockProperties.getSslTruststorePassword());
         break;
       case REPLICATED:
         ReplicatedServersConfig replicatedServersConfig = config.useReplicatedServers();
@@ -201,18 +196,17 @@ public class RedissonConfiguration {
         for (String nodeAddress : multipleServerConfig.getNodeAddresses()) {
           replicatedServersConfig.addNodeAddress(prefixAddress(nodeAddress));
         }
-        replicatedServersConfig.setClientName(redissonProperties.getClientName());
-        replicatedServersConfig.setPassword(redissonProperties.getPassword());
+        replicatedServersConfig.setClientName(lockProperties.getClientName());
+        replicatedServersConfig.setPassword(lockProperties.getPassword());
         replicatedServersConfig.setPingConnectionInterval(
-            redissonProperties.getPingConnectionInterval());
+            lockProperties.getPingConnectionInterval());
         replicatedServersConfig.setSslEnableEndpointIdentification(
-            redissonProperties.getSslEnableEndpointIdentification());
-        replicatedServersConfig.setSslKeystore(redissonProperties.getSslKeystore());
-        replicatedServersConfig.setSslKeystorePassword(redissonProperties.getSslKeystorePassword());
-        replicatedServersConfig.setSslProvider(redissonProperties.getSslProvider());
-        replicatedServersConfig.setSslTruststore(redissonProperties.getSslTruststore());
-        replicatedServersConfig.setSslTruststorePassword(
-            redissonProperties.getSslTruststorePassword());
+            lockProperties.getSslEnableEndpointIdentification());
+        replicatedServersConfig.setSslKeystore(lockProperties.getSslKeystore());
+        replicatedServersConfig.setSslKeystorePassword(lockProperties.getSslKeystorePassword());
+        replicatedServersConfig.setSslProvider(lockProperties.getSslProvider());
+        replicatedServersConfig.setSslTruststore(lockProperties.getSslTruststore());
+        replicatedServersConfig.setSslTruststorePassword(lockProperties.getSslTruststorePassword());
         break;
       case MASTER_SLAVE:
         MasterSlaveServersConfig masterSlaveServersConfig = config.useMasterSlaveServers();
@@ -251,19 +245,18 @@ public class RedissonConfiguration {
             masterSlaveServersConfig.addSlaveAddress(prefixAddress(nodeAddress));
           }
         }
-        masterSlaveServersConfig.setClientName(redissonProperties.getClientName());
-        masterSlaveServersConfig.setPassword(redissonProperties.getPassword());
+        masterSlaveServersConfig.setClientName(lockProperties.getClientName());
+        masterSlaveServersConfig.setPassword(lockProperties.getPassword());
         masterSlaveServersConfig.setPingConnectionInterval(
-            redissonProperties.getPingConnectionInterval());
+            lockProperties.getPingConnectionInterval());
         masterSlaveServersConfig.setSslEnableEndpointIdentification(
-            redissonProperties.getSslEnableEndpointIdentification());
-        masterSlaveServersConfig.setSslKeystore(redissonProperties.getSslKeystore());
-        masterSlaveServersConfig.setSslKeystorePassword(
-            redissonProperties.getSslKeystorePassword());
-        masterSlaveServersConfig.setSslProvider(redissonProperties.getSslProvider());
-        masterSlaveServersConfig.setSslTruststore(redissonProperties.getSslTruststore());
+            lockProperties.getSslEnableEndpointIdentification());
+        masterSlaveServersConfig.setSslKeystore(lockProperties.getSslKeystore());
+        masterSlaveServersConfig.setSslKeystorePassword(lockProperties.getSslKeystorePassword());
+        masterSlaveServersConfig.setSslProvider(lockProperties.getSslProvider());
+        masterSlaveServersConfig.setSslTruststore(lockProperties.getSslTruststore());
         masterSlaveServersConfig.setSslTruststorePassword(
-            redissonProperties.getSslTruststorePassword());
+            lockProperties.getSslTruststorePassword());
         break;
       default:
     }

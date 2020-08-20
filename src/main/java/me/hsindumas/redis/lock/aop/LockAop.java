@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.hsindumas.redis.lock.annotation.Lock;
 import me.hsindumas.redis.lock.enums.LockModel;
 import me.hsindumas.redis.lock.excepiton.LockException;
-import me.hsindumas.redis.lock.properties.RedissonProperties;
+import me.hsindumas.redis.lock.properties.LockProperties;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
 @Order(-10)
 @RequiredArgsConstructor
 public class LockAop {
-  private final RedissonProperties redissonProperties;
+  private final LockProperties lockProperties;
   @Resource private RedissonClient redissonClient;
 
   @Pointcut("@annotation(lock)")
@@ -87,7 +87,7 @@ public class LockAop {
         keys.add("redisson:lock:" + value.toString() + keyConstant);
       }
     }
-    log.info("spel表达式key={},value={}", key, keys);
+    log.info("spel expression : key={},value={}", key, keys);
     return keys;
   }
 
@@ -102,35 +102,29 @@ public class LockAop {
             .getParameterNames(((MethodSignature) proceedingJoinPoint.getSignature()).getMethod());
     Object[] args = proceedingJoinPoint.getArgs();
 
-    long attemptTimeout = lock.attemptTimeout();
-    if (attemptTimeout == 0) {
-      attemptTimeout = redissonProperties.getAttemptTimeout();
+    long waitTime = lock.attemptTimeout();
+    if (waitTime == 0) {
+      waitTime = lockProperties.getAttemptTimeout();
     }
-    long lockWatchdogTimeout = lock.lockWatchdogTimeout();
-    if (lockWatchdogTimeout == 0) {
-      lockWatchdogTimeout = redissonProperties.getLockWatchdogTimeout();
+    long lockTime = lock.lockTimeout();
+    if (lockTime == 0) {
+      lockTime = lockProperties.getLockTimeout();
     }
     LockModel lockModel = lock.lockModel();
-    if (lockModel.equals(LockModel.AUTO)) {
-      LockModel lockModel1 = redissonProperties.getLockModel();
-      if (lockModel1 != null) {
-        lockModel = lockModel1;
-      } else if (keys.length > 1) {
+    if (lockModel == LockModel.AUTO) {
+      if (keys.length > 1) {
         lockModel = LockModel.RED_LOCK;
       } else {
-        lockModel = LockModel.REENTRANT;
+        lockModel = LockModel.FAIR;
       }
     }
-    if (!lockModel.equals(LockModel.MULTIPLE)
-        && !lockModel.equals(LockModel.RED_LOCK)
-        && keys.length > 1) {
-      throw new RuntimeException("参数有多个,锁模式为->" + lockModel.name() + ".无法锁定");
+    if (lockModel != LockModel.MULTIPLE && lockModel != LockModel.RED_LOCK && keys.length > 1) {
+      throw new RuntimeException(
+          "There are multiple parameters, the current lock mode is "
+              + lockModel.name()
+              + ",cannot be locked");
     }
-    log.info(
-        "锁模式->{},等待锁定时间->{}秒.锁定最长时间->{}秒",
-        lockModel.name(),
-        attemptTimeout / 1000,
-        lockWatchdogTimeout / 1000);
+    log.info("锁模式->{},等待锁定时间->{}秒.锁定最长时间->{}秒", lockModel.name(), waitTime / 1000, lockTime / 1000);
     boolean res = false;
     RLock rLock = null;
     // 一直等待加锁.
@@ -199,12 +193,12 @@ public class LockAop {
     // 执行aop
     if (rLock != null) {
       try {
-        if (attemptTimeout == -1) {
+        if (waitTime == -1) {
           res = true;
           // 一直等待加锁
-          rLock.lock(lockWatchdogTimeout, TimeUnit.MILLISECONDS);
+          rLock.lock(lockTime, TimeUnit.MILLISECONDS);
         } else {
-          res = rLock.tryLock(attemptTimeout, lockWatchdogTimeout, TimeUnit.MILLISECONDS);
+          res = rLock.tryLock(waitTime, lockTime, TimeUnit.MILLISECONDS);
         }
         if (res) {
           return proceedingJoinPoint.proceed();
