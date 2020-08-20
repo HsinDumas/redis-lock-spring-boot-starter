@@ -14,7 +14,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.redisson.RedissonMultiLock;
 import org.redisson.RedissonRedLock;
 import org.redisson.api.RLock;
-import org.redisson.api.RReadWriteLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.annotation.Order;
@@ -39,6 +38,8 @@ import java.util.stream.Collectors;
 @Order(-10)
 @RequiredArgsConstructor
 public class LockAop {
+  private static final String REDIS_LOCK_PREFIX = "lock:";
+
   private final LockProperties lockProperties;
   @Resource private RedissonClient redissonClient;
 
@@ -58,36 +59,32 @@ public class LockAop {
       String key, String[] parameterNames, Object[] values, String keyConstant) {
     List<String> keys = new ArrayList<>();
     if (!key.contains("#")) {
-      String s = "lock:" + key + keyConstant;
-      log.info("没有使用spel表达式value->{}", s);
-      keys.add(s);
-      return keys;
-    }
-    // spel解析器
-    ExpressionParser parser = new SpelExpressionParser();
-    // spel上下文
-    EvaluationContext context = new StandardEvaluationContext();
-    for (int i = 0; i < parameterNames.length; i++) {
-      context.setVariable(parameterNames[i], values[i]);
-    }
-    Expression expression = parser.parseExpression(key);
-    Object value = expression.getValue(context);
-    if (value != null) {
-      if (value instanceof List) {
-        List<?> value1 = (List<?>) value;
-        for (Object o : value1) {
-          keys.add("lock:" + o.toString() + keyConstant);
+      keys.add(REDIS_LOCK_PREFIX + key + keyConstant);
+    } else {
+      ExpressionParser parser = new SpelExpressionParser();
+      EvaluationContext context = new StandardEvaluationContext();
+      for (int i = 0; i < parameterNames.length; i++) {
+        context.setVariable(parameterNames[i], values[i]);
+      }
+      Expression expression = parser.parseExpression(key);
+      Object value = expression.getValue(context);
+      if (value != null) {
+        if (value instanceof List) {
+          List<?> value1 = (List<?>) value;
+          for (Object o : value1) {
+            keys.add(REDIS_LOCK_PREFIX + o.toString() + keyConstant);
+          }
+        } else if (value.getClass().isArray()) {
+          Object[] obj = (Object[]) value;
+          for (Object o : obj) {
+            keys.add(REDIS_LOCK_PREFIX + o.toString() + keyConstant);
+          }
+        } else {
+          keys.add(REDIS_LOCK_PREFIX + value.toString() + keyConstant);
         }
-      } else if (value.getClass().isArray()) {
-        Object[] obj = (Object[]) value;
-        for (Object o : obj) {
-          keys.add("lock:" + o.toString() + keyConstant);
-        }
-      } else {
-        keys.add("lock:" + value.toString() + keyConstant);
       }
     }
-    log.info("spel expression : key {},value {}", key, keys);
+    log.info("keys for lock {}", keys);
     return keys;
   }
 
@@ -136,8 +133,10 @@ public class LockAop {
       case RED_LOCK:
         List<RLock> rLocks = new ArrayList<>();
         for (String key : keys) {
-          List<String> valueBySpel = getValueBySpel(key, parameterNames, args, lock.keyConstant());
-          rLocks = valueBySpel.stream().map(redissonClient::getLock).collect(Collectors.toList());
+          rLocks =
+              getValueBySpel(key, parameterNames, args, lock.keyConstant()).stream()
+                  .map(redissonClient::getLock)
+                  .collect(Collectors.toList());
         }
         RLock[] locks = new RLock[rLocks.size()];
         int index = 0;
@@ -149,8 +148,10 @@ public class LockAop {
       case MULTIPLE:
         rLocks = new ArrayList<>();
         for (String key : keys) {
-          List<String> valueBySpel = getValueBySpel(key, parameterNames, args, lock.keyConstant());
-          rLocks = valueBySpel.stream().map(redissonClient::getLock).collect(Collectors.toList());
+          rLocks =
+              getValueBySpel(key, parameterNames, args, lock.keyConstant()).stream()
+                  .map(redissonClient::getLock)
+                  .collect(Collectors.toList());
         }
         locks = new RLock[rLocks.size()];
         index = 0;
@@ -160,38 +161,38 @@ public class LockAop {
         rLock = new RedissonMultiLock(locks);
         break;
       case REENTRANT:
-        List<String> valueBySpel =
-            getValueBySpel(keys[0], parameterNames, args, lock.keyConstant());
-        // 如果spel表达式是数组或者LIST 则使用红锁
-        if (valueBySpel.size() == 1) {
-          rLock = redissonClient.getLock(valueBySpel.get(0));
+        List<String> lockKeys = getValueBySpel(keys[0], parameterNames, args, lock.keyConstant());
+        if (lockKeys.size() == 1) {
+          rLock = redissonClient.getLock(lockKeys.get(0));
         } else {
-          locks = new RLock[valueBySpel.size()];
+          locks = new RLock[lockKeys.size()];
           index = 0;
-          for (String s : valueBySpel) {
+          for (String s : lockKeys) {
             locks[index++] = redissonClient.getLock(s);
           }
           rLock = new RedissonRedLock(locks);
         }
         break;
       case READ:
-        RReadWriteLock readWriteLock =
-            redissonClient.getReadWriteLock(
-                getValueBySpel(keys[0], parameterNames, args, lock.keyConstant()).get(0));
-        rLock = readWriteLock.readLock();
+        rLock =
+            redissonClient
+                .getReadWriteLock(
+                    getValueBySpel(keys[0], parameterNames, args, lock.keyConstant()).get(0))
+                .readLock();
         break;
       case WRITE:
-        readWriteLock =
-            redissonClient.getReadWriteLock(
-                getValueBySpel(keys[0], parameterNames, args, lock.keyConstant()).get(0));
-        rLock = readWriteLock.writeLock();
+        rLock =
+            redissonClient
+                .getReadWriteLock(
+                    getValueBySpel(keys[0], parameterNames, args, lock.keyConstant()).get(0))
+                .writeLock();
         break;
       default:
         throw new LockException("lock model " + lockModel.name() + " is not supported");
     }
 
     if (rLock == null) {
-      throw new LockException("请稍后再试~");
+      throw new LockException("cannot acquire the lock");
     }
 
     try {
@@ -205,7 +206,7 @@ public class LockAop {
       if (res) {
         return proceedingJoinPoint.proceed();
       } else {
-        throw new LockException("请稍后再试~");
+        throw new LockException("cannot acquire the lock~");
       }
     } finally {
       if (res) {
