@@ -124,10 +124,9 @@ public class LockAop {
               + lockModel.name()
               + ",cannot be locked");
     }
-    log.info("锁模式->{},等待锁定时间->{}秒.锁定最长时间->{}秒", lockModel.name(), waitTime / 1000, lockTime / 1000);
+    log.info("lock model {}.waitTime {}.lockTime {}", lockModel.name(), waitTime, lockTime);
     boolean res = false;
-    RLock rLock = null;
-    // 一直等待加锁.
+    RLock rLock;
     switch (lockModel) {
       case FAIR:
         rLock =
@@ -188,29 +187,30 @@ public class LockAop {
         rLock = readWriteLock.writeLock();
         break;
       default:
+        throw new LockException("lock model " + lockModel.name() + " is not supported");
     }
 
-    // 执行aop
-    if (rLock != null) {
-      try {
-        if (waitTime == -1) {
-          res = true;
-          // 一直等待加锁
-          rLock.lock(lockTime, TimeUnit.MILLISECONDS);
-        } else {
-          res = rLock.tryLock(waitTime, lockTime, TimeUnit.MILLISECONDS);
-        }
-        if (res) {
-          return proceedingJoinPoint.proceed();
-        } else {
-          throw new LockException("请稍后再试~");
-        }
-      } finally {
-        if (res) {
-          rLock.unlock();
-        }
+    if (rLock == null) {
+      throw new LockException("请稍后再试~");
+    }
+
+    try {
+      if (waitTime == -1) {
+        res = true;
+        // 一直等待加锁
+        rLock.lock(lockTime, TimeUnit.MILLISECONDS);
+      } else {
+        res = rLock.tryLock(waitTime, lockTime, TimeUnit.MILLISECONDS);
+      }
+      if (res) {
+        return proceedingJoinPoint.proceed();
+      } else {
+        throw new LockException("请稍后再试~");
+      }
+    } finally {
+      if (res) {
+        rLock.unlock();
       }
     }
-    throw new LockException("请稍后再试~");
   }
 }
