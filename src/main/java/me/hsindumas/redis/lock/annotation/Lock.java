@@ -25,11 +25,7 @@ public @interface Lock {
    */
   LockModel lockModel() default LockModel.AUTO;
 
-  /**
-   * 如果keys有多个,如果不设置,则使用 联锁
-   *
-   * @return [] string [ ]
-   */
+  /** @return [] string [ ] */
   String[] keys() default {};
 
   /**
@@ -41,14 +37,14 @@ public @interface Lock {
   String keyConstant() default "";
 
   /**
-   * 锁超时时间,默认30000毫秒(可在配置文件全局设置)
+   * 锁超时时间,默认使用配置文件全局设置
    *
    * @return long long
    */
   long lockTimeout() default 0;
 
   /**
-   * 等待加锁超时时间,默认10000毫秒 -1 则表示一直等待(可在配置文件全局设置)
+   * 等待加锁超时时间,默认使用配置文件全局设置 -1 则表示一直等待
    *
    * @return long long
    */
