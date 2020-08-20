@@ -1,7 +1,6 @@
 package me.hsindumas.redis.lock.properties;
 
 import lombok.Data;
-import me.hsindumas.redis.lock.enums.LockModel;
 import me.hsindumas.redis.lock.enums.Model;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -28,7 +27,7 @@ public class LockProperties {
   /** 锁超时时间 */
   private Long lockTime = 30000L;
   /** 等待加锁超时时间 -1一直等待 */
-  private Long attemptTimeout = 10000L;
+  private Long waitTime = 10000L;
 
   @NestedConfigurationProperty private SingleServerConfig singleServerConfig;
   @NestedConfigurationProperty private MultipleServerConfig multipleServerConfig;

@@ -102,11 +102,11 @@ public class LockAop {
             .getParameterNames(((MethodSignature) proceedingJoinPoint.getSignature()).getMethod());
     Object[] args = proceedingJoinPoint.getArgs();
 
-    long waitTime = lock.attemptTimeout();
+    long waitTime = lock.waitTime();
     if (waitTime == 0) {
-      waitTime = lockProperties.getAttemptTimeout();
+      waitTime = lockProperties.getWaitTime();
     }
-    long lockTime = lock.lockTimeout();
+    long lockTime = lock.lockTime();
     if (lockTime == 0) {
       lockTime = lockProperties.getLockTime();
     }

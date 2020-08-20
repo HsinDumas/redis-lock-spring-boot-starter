@@ -41,12 +41,12 @@ public @interface Lock {
    *
    * @return long long
    */
-  long lockTimeout() default 0;
+  long lockTime() default 0;
 
   /**
    * 等待加锁超时时间,默认使用配置文件全局设置 -1 则表示一直等待
    *
    * @return long long
    */
-  long attemptTimeout() default 0;
+  long waitTime() default 0;
 }
