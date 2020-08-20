@@ -2,6 +2,7 @@ package me.hsindumas.redis.lock.configuration;
 
 import lombok.RequiredArgsConstructor;
 import me.hsindumas.redis.lock.aop.LockAop;
+import me.hsindumas.redis.lock.excepiton.LockException;
 import me.hsindumas.redis.lock.properties.LockProperties;
 import me.hsindumas.redis.lock.properties.MultipleServerConfig;
 import me.hsindumas.redis.lock.properties.SingleServerConfig;
@@ -17,7 +18,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
 
 /**
  * @author Zho.Xin
@@ -107,12 +107,14 @@ public class RedissonConfiguration {
             lockProperties.getSslTruststorePassword());
         break;
       default:
+        throw new LockException(
+            "lock model " + lockProperties.getModel().name() + " is not supported");
     }
     return Redisson.create(config);
   }
 
   private String prefixAddress(String address) {
-    if (!StringUtils.isEmpty(address) && !address.startsWith("redis")) {
+    if (address != null && !address.startsWith("redis")) {
       return "redis://" + address;
     }
     return address;
