@@ -25,11 +25,8 @@ public class LockProperties {
   private URL sslKeystore;
   private String sslKeystorePassword;
 
-  /** 锁的模式 如果不设置 单个key默认可重入锁 多个key默认联锁 */
-  private LockModel lockModel;
-
   /** 锁超时时间 */
-  private Long lockTimeout = 30000L;
+  private Long lockTime = 30000L;
   /** 等待加锁超时时间 -1一直等待 */
   private Long attemptTimeout = 10000L;
 

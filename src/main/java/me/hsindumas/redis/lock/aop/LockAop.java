@@ -108,7 +108,7 @@ public class LockAop {
     }
     long lockTime = lock.lockTimeout();
     if (lockTime == 0) {
-      lockTime = lockProperties.getLockTimeout();
+      lockTime = lockProperties.getLockTime();
     }
     LockModel lockModel = lock.lockModel();
     if (lockModel == LockModel.AUTO) {

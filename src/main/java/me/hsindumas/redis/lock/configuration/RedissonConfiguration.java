@@ -40,14 +40,7 @@ public class RedissonConfiguration {
   @Bean
   @ConditionalOnMissingBean(RedissonClient.class)
   public RedissonClient redissonClient() {
-    Config config = new Config();
-    config.setLockWatchdogTimeout(lockProperties.getLockWatchdogTimeout());
-    config.setKeepPubSubOrder(lockProperties.getKeepPubSubOrder());
-    config.setUseScriptCache(lockProperties.getUseScriptCache());
-    config.setMinCleanUpDelay(lockProperties.getMinCleanUpDelay());
-    config.setMaxCleanUpDelay(lockProperties.getMaxCleanUpDelay());
-    config = new Config(config);
-
+    Config config = new Config(new Config());
     MultipleServerConfig multipleServerConfig = lockProperties.getMultipleServerConfig();
 
     switch (lockProperties.getModel()) {
@@ -64,14 +57,9 @@ public class RedissonConfiguration {
             param.getSubscriptionConnectionMinimumIdleSize());
         singleServerConfig.setSubscriptionConnectionPoolSize(
             param.getSubscriptionConnectionPoolSize());
-        singleServerConfig.setClientName(lockProperties.getClientName());
         singleServerConfig.setPassword(lockProperties.getPassword());
-        singleServerConfig.setPingConnectionInterval(lockProperties.getPingConnectionInterval());
-        singleServerConfig.setSslEnableEndpointIdentification(
-            lockProperties.getSslEnableEndpointIdentification());
         singleServerConfig.setSslKeystore(lockProperties.getSslKeystore());
         singleServerConfig.setSslKeystorePassword(lockProperties.getSslKeystorePassword());
-        singleServerConfig.setSslProvider(lockProperties.getSslProvider());
         singleServerConfig.setSslTruststore(lockProperties.getSslTruststore());
         singleServerConfig.setSslTruststorePassword(lockProperties.getSslTruststorePassword());
         break;
@@ -107,14 +95,9 @@ public class RedissonConfiguration {
         for (String nodeAddress : multipleServerConfig.getNodeAddresses()) {
           clusterServersConfig.addNodeAddress(prefixAddress(nodeAddress));
         }
-        clusterServersConfig.setClientName(lockProperties.getClientName());
         clusterServersConfig.setPassword(lockProperties.getPassword());
-        clusterServersConfig.setPingConnectionInterval(lockProperties.getPingConnectionInterval());
-        clusterServersConfig.setSslEnableEndpointIdentification(
-            lockProperties.getSslEnableEndpointIdentification());
         clusterServersConfig.setSslKeystore(lockProperties.getSslKeystore());
         clusterServersConfig.setSslKeystorePassword(lockProperties.getSslKeystorePassword());
-        clusterServersConfig.setSslProvider(lockProperties.getSslProvider());
         clusterServersConfig.setSslTruststore(lockProperties.getSslTruststore());
         clusterServersConfig.setSslTruststorePassword(lockProperties.getSslTruststorePassword());
         break;
@@ -152,14 +135,9 @@ public class RedissonConfiguration {
         for (String nodeAddress : multipleServerConfig.getNodeAddresses()) {
           sentinelServersConfig.addSentinelAddress(prefixAddress(nodeAddress));
         }
-        sentinelServersConfig.setClientName(lockProperties.getClientName());
         sentinelServersConfig.setPassword(lockProperties.getPassword());
-        sentinelServersConfig.setPingConnectionInterval(lockProperties.getPingConnectionInterval());
-        sentinelServersConfig.setSslEnableEndpointIdentification(
-            lockProperties.getSslEnableEndpointIdentification());
         sentinelServersConfig.setSslKeystore(lockProperties.getSslKeystore());
         sentinelServersConfig.setSslKeystorePassword(lockProperties.getSslKeystorePassword());
-        sentinelServersConfig.setSslProvider(lockProperties.getSslProvider());
         sentinelServersConfig.setSslTruststore(lockProperties.getSslTruststore());
         sentinelServersConfig.setSslTruststorePassword(lockProperties.getSslTruststorePassword());
         break;
@@ -196,15 +174,9 @@ public class RedissonConfiguration {
         for (String nodeAddress : multipleServerConfig.getNodeAddresses()) {
           replicatedServersConfig.addNodeAddress(prefixAddress(nodeAddress));
         }
-        replicatedServersConfig.setClientName(lockProperties.getClientName());
         replicatedServersConfig.setPassword(lockProperties.getPassword());
-        replicatedServersConfig.setPingConnectionInterval(
-            lockProperties.getPingConnectionInterval());
-        replicatedServersConfig.setSslEnableEndpointIdentification(
-            lockProperties.getSslEnableEndpointIdentification());
         replicatedServersConfig.setSslKeystore(lockProperties.getSslKeystore());
         replicatedServersConfig.setSslKeystorePassword(lockProperties.getSslKeystorePassword());
-        replicatedServersConfig.setSslProvider(lockProperties.getSslProvider());
         replicatedServersConfig.setSslTruststore(lockProperties.getSslTruststore());
         replicatedServersConfig.setSslTruststorePassword(lockProperties.getSslTruststorePassword());
         break;
@@ -245,15 +217,9 @@ public class RedissonConfiguration {
             masterSlaveServersConfig.addSlaveAddress(prefixAddress(nodeAddress));
           }
         }
-        masterSlaveServersConfig.setClientName(lockProperties.getClientName());
         masterSlaveServersConfig.setPassword(lockProperties.getPassword());
-        masterSlaveServersConfig.setPingConnectionInterval(
-            lockProperties.getPingConnectionInterval());
-        masterSlaveServersConfig.setSslEnableEndpointIdentification(
-            lockProperties.getSslEnableEndpointIdentification());
         masterSlaveServersConfig.setSslKeystore(lockProperties.getSslKeystore());
         masterSlaveServersConfig.setSslKeystorePassword(lockProperties.getSslKeystorePassword());
-        masterSlaveServersConfig.setSslProvider(lockProperties.getSslProvider());
         masterSlaveServersConfig.setSslTruststore(lockProperties.getSslTruststore());
         masterSlaveServersConfig.setSslTruststorePassword(
             lockProperties.getSslTruststorePassword());
