@@ -58,7 +58,7 @@ public class LockAop {
       String key, String[] parameterNames, Object[] values, String keyConstant) {
     List<String> keys = new ArrayList<>();
     if (!key.contains("#")) {
-      String s = "redisson:lock:" + key + keyConstant;
+      String s = "lock:" + key + keyConstant;
       log.info("没有使用spel表达式value->{}", s);
       keys.add(s);
       return keys;
@@ -76,18 +76,18 @@ public class LockAop {
       if (value instanceof List) {
         List<?> value1 = (List<?>) value;
         for (Object o : value1) {
-          keys.add("redisson:lock:" + o.toString() + keyConstant);
+          keys.add("lock:" + o.toString() + keyConstant);
         }
       } else if (value.getClass().isArray()) {
         Object[] obj = (Object[]) value;
         for (Object o : obj) {
-          keys.add("redisson:lock:" + o.toString() + keyConstant);
+          keys.add("lock:" + o.toString() + keyConstant);
         }
       } else {
-        keys.add("redisson:lock:" + value.toString() + keyConstant);
+        keys.add("lock:" + value.toString() + keyConstant);
       }
     }
-    log.info("spel expression : key={},value={}", key, keys);
+    log.info("spel expression : key {},value {}", key, keys);
     return keys;
   }
 
@@ -95,7 +95,7 @@ public class LockAop {
   public Object aroundAdvice(ProceedingJoinPoint proceedingJoinPoint, Lock lock) throws Throwable {
     String[] keys = lock.keys();
     if (keys.length == 0) {
-      throw new RuntimeException("keys不能为空");
+      throw new LockException("keys is required");
     }
     String[] parameterNames =
         new LocalVariableTableParameterNameDiscoverer()
