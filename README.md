@@ -31,7 +31,7 @@
 <dependency>
     <groupId>com.github.hsindumas</groupId>
     <artifactId>redis-lock-spring-boot-starter</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 </dependency>
 ```
 
@@ -47,7 +47,13 @@ compile group: 'com.github.hsindumas', name: 'redis-lock-spring-boot-starter', v
 不需要额外配置redis，直接按照`spring.redis`的配置，避免创建没必要的redis连接
 
 ### 使用
+
 在需要枷锁的方法上添加@Lock注释，设置好key，作为redis的key
+
+```java
+@Lock(keys = "test")
+@Lock(keys = "#param", keyConstant = ":test")
+```
 
 
 `yml`配置方式：
@@ -57,7 +63,6 @@ lock:
   lockTime: 30000L
   waitTime: 10000L
 ```
-
 
 ## 反馈建议
 
