@@ -1,11 +1,11 @@
-package me.hsindumas.redis.lock.aop;
+package com.github.hsindumas.redis.lock.aop;
 
+import com.github.hsindumas.redis.lock.annotation.Lock;
+import com.github.hsindumas.redis.lock.enums.LockModel;
+import com.github.hsindumas.redis.lock.excepiton.LockException;
+import com.github.hsindumas.redis.lock.properties.LockProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.hsindumas.redis.lock.annotation.Lock;
-import me.hsindumas.redis.lock.enums.LockModel;
-import me.hsindumas.redis.lock.excepiton.LockException;
-import me.hsindumas.redis.lock.properties.LockProperties;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;

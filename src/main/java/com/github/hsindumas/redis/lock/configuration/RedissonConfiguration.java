@@ -1,8 +1,8 @@
-package me.hsindumas.redis.lock.configuration;
+package com.github.hsindumas.redis.lock.configuration;
 
+import com.github.hsindumas.redis.lock.aop.LockAop;
+import com.github.hsindumas.redis.lock.properties.LockProperties;
 import lombok.RequiredArgsConstructor;
-import me.hsindumas.redis.lock.aop.LockAop;
-import me.hsindumas.redis.lock.properties.LockProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

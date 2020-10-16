@@ -1,4 +1,4 @@
-package me.hsindumas.redis.lock.excepiton;
+package com.github.hsindumas.redis.lock.excepiton;
 /**
  * 分布式锁异常
  *

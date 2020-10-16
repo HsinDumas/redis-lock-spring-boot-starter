@@ -1,4 +1,4 @@
-package me.hsindumas.redis.lock.enums;
+package com.github.hsindumas.redis.lock.enums;
 /**
  * 锁的模式
  *
