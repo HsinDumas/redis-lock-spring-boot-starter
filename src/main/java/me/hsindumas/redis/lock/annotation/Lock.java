@@ -26,7 +26,7 @@ public @interface Lock {
   LockModel lockModel() default LockModel.AUTO;
 
   /** @return [] string [ ] */
-  String[] keys() default {};
+  String[] keys();
 
   /**
    * key的静态常量:当key的spel的值是LIST,数组时使用+号连接将会被spel认为这个变量是个字符串,只能产生一把锁,达不到我们的目的,<br>
