@@ -14,10 +14,10 @@ import org.springframework.context.annotation.Configuration;
  * @since 2020/5/18
  */
 @Configuration
-@EnableConfigurationProperties(LockProperties.class)
-@ConditionalOnClass(LockProperties.class)
 @RequiredArgsConstructor
-public class RedissonConfiguration {
+@ConditionalOnClass(LockProperties.class)
+@EnableConfigurationProperties(LockProperties.class)
+public class LockConfiguration {
 
   private final LockProperties lockProperties;
 
