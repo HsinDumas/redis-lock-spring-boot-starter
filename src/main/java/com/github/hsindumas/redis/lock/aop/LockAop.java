@@ -46,15 +46,6 @@ public class LockAop {
   @Pointcut("@annotation(lock)")
   public void controllerAspect(Lock lock) {}
 
-  /**
-   * 通过spring Spel 获取参数
-   *
-   * @param key 定义的key值 以#开头 例如:#user
-   * @param parameterNames 形参
-   * @param values 形参值
-   * @param keyConstant key的常亮
-   * @return String
-   */
   private List<String> getValueBySpel(
       String key, String[] parameterNames, Object[] values, String keyConstant) {
     List<String> keys = new ArrayList<>();
@@ -92,7 +83,7 @@ public class LockAop {
   public Object aroundAdvice(ProceedingJoinPoint proceedingJoinPoint, Lock lock) throws Throwable {
     String[] keys = lock.keys();
     if (keys.length == 0) {
-      throw new LockException("keys is required");
+      throw new LockException("the lock keys are required");
     }
     String[] parameterNames =
         new LocalVariableTableParameterNameDiscoverer()
@@ -117,12 +108,9 @@ public class LockAop {
     }
     if (lockModel != LockModel.MULTIPLE && lockModel != LockModel.RED_LOCK && keys.length > 1) {
       throw new RuntimeException(
-          "There are multiple parameters, the current lock mode is "
-              + lockModel.name()
-              + ",cannot be locked");
+          "the lock mode " + lockModel.name() + " should have a single parameter");
     }
     log.info("lock model {}.waitTime {}.lockTime {}", lockModel.name(), waitTime, lockTime);
-    boolean res = false;
     RLock rLock;
     switch (lockModel) {
       case FAIR:
@@ -133,45 +121,32 @@ public class LockAop {
       case RED_LOCK:
         List<RLock> rLocks = new ArrayList<>();
         for (String key : keys) {
-          rLocks =
+          rLocks.addAll(
               getValueBySpel(key, parameterNames, args, lock.keyConstant()).stream()
                   .map(redissonClient::getLock)
-                  .collect(Collectors.toList());
+                  .collect(Collectors.toList()));
         }
-        RLock[] locks = new RLock[rLocks.size()];
-        int index = 0;
-        for (RLock r : rLocks) {
-          locks[index++] = r;
-        }
-        rLock = new RedissonRedLock(locks);
+        rLock = new RedissonRedLock(rLocks.toArray(new RLock[0]));
         break;
       case MULTIPLE:
         rLocks = new ArrayList<>();
         for (String key : keys) {
-          rLocks =
+          rLocks.addAll(
               getValueBySpel(key, parameterNames, args, lock.keyConstant()).stream()
                   .map(redissonClient::getLock)
-                  .collect(Collectors.toList());
+                  .collect(Collectors.toList()));
         }
-        locks = new RLock[rLocks.size()];
-        index = 0;
-        for (RLock r : rLocks) {
-          locks[index++] = r;
-        }
-        rLock = new RedissonMultiLock(locks);
+        rLock = new RedissonMultiLock(rLocks.toArray(new RLock[0]));
         break;
       case REENTRANT:
         List<String> lockKeys = getValueBySpel(keys[0], parameterNames, args, lock.keyConstant());
         if (lockKeys.size() == 1) {
           rLock = redissonClient.getLock(lockKeys.get(0));
-        } else {
-          locks = new RLock[lockKeys.size()];
-          index = 0;
-          for (String s : lockKeys) {
-            locks[index++] = redissonClient.getLock(s);
-          }
-          rLock = new RedissonRedLock(locks);
+          break;
         }
+        rLock =
+            new RedissonRedLock(
+                lockKeys.stream().map(redissonClient::getLock).toArray(RLock[]::new));
         break;
       case READ:
         rLock =
@@ -192,9 +167,10 @@ public class LockAop {
     }
 
     if (rLock == null) {
-      throw new LockException("cannot acquire the lock");
+      throw new LockException("can not acquire the lock");
     }
 
+    boolean res = false;
     try {
       if (waitTime == -1) {
         res = true;
@@ -205,9 +181,8 @@ public class LockAop {
       }
       if (res) {
         return proceedingJoinPoint.proceed();
-      } else {
-        throw new LockException("cannot acquire the lock~");
       }
+      throw new LockException("can not acquire the lock");
     } finally {
       if (res) {
         rLock.unlock();
