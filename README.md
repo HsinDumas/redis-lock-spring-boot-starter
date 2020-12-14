@@ -1,4 +1,3 @@
-
 ## 简介
 
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
@@ -31,7 +30,7 @@
 <dependency>
     <groupId>com.github.hsindumas</groupId>
     <artifactId>redis-lock-spring-boot-starter</artifactId>
-    <version>1.1.3</version>
+    <version>1.1.5</version>
 </dependency>
 ```
 
@@ -39,12 +38,12 @@
 
 ```groovy
 // https://mvnrepository.com/artifact/com.github.hsindumas/redis-lock-spring-boot-starter
-compile group: 'com.github.hsindumas', name: 'redis-lock-spring-boot-starter', version: '1.1.3'
+compile group: 'com.github.hsindumas', name: 'redis-lock-spring-boot-starter', version: '1.1.5'
 ```
 
 ### 配置redis
 
-不需要额外配置redis，直接按照`spring.redis`的配置，避免创建没必要的redis连接
+按照redisson锁支持的方式，通过`spring.redis.redisson`或者`spring.redis`配置
 
 ### 使用
 
@@ -55,13 +54,12 @@ compile group: 'com.github.hsindumas', name: 'redis-lock-spring-boot-starter', v
 @Lock(keys = "#param", keyConstant = ":test")
 ```
 
+`yml`配置方式： 可以修改全局的锁超时时间（默认30000毫秒）和等待时间（默认10000毫秒）
 
-`yml`配置方式：
-可以修改全局的锁超时时间和等待时间
 ```yaml
 lock:
-  lockTime: 30000L
-  waitTime: 10000L
+  lockTime:
+  waitTime: 
 ```
 
 ## 反馈建议
