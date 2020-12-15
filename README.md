@@ -9,9 +9,7 @@
 
 本插件是以AOP的形式加上redisson的封装实现。
 
-可以修改锁超时时间和等待加锁超时时间
-
-**`redis-lock-spring-boot-starter`将`redisson`与`spring-boot`框架快速整合，目的是为了实现`最简单`的基于redis的分布式锁**。
+**`redis-lock-spring-boot-starter`将`redisson`与`spring-boot`框架整合，目的是为了给`spring-boot`开发者提供`最简单`的基于redis的分布式锁**。
 
 🚀项目持续优化迭代，欢迎大家提ISSUE和PR！麻烦大家能给一颗star✨，您的star是我们持续更新的动力！
 
@@ -19,7 +17,13 @@
 
 ## 功能特性
 
-- [x] [支持SPEL语法](#支持SPEL语法)
+- [x] 支持SPEL语法
+- [x] 可重入锁
+- [x] 公平锁
+- [x] 联锁
+- [x] 红锁
+- [x] 读锁
+- [x] 写锁
 
 ## 快速使用
 
