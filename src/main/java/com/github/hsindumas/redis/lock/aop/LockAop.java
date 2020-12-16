@@ -43,7 +43,7 @@ public class LockAop {
   @Resource private RedissonClient redissonClient;
 
   @Pointcut("@annotation(lock)")
-  public void controllerAspect(Lock lock) {}
+  public void lockAspect(Lock lock) {}
 
   private List<String> getValueBySpel(
       String key, String[] parameterNames, Object[] values, String keyConstant) {
@@ -78,7 +78,7 @@ public class LockAop {
     return keys;
   }
 
-  @Around(value = "controllerAspect(lock)", argNames = "proceedingJoinPoint,lock")
+  @Around(value = "lockAspect(lock)", argNames = "proceedingJoinPoint,lock")
   public Object aroundAdvice(ProceedingJoinPoint proceedingJoinPoint, Lock lock) throws Throwable {
     String[] keys = lock.keys();
     if (keys.length == 0) {
