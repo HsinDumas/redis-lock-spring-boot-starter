@@ -1,7 +1,6 @@
 package com.github.hsindumas.redis.lock.annotation;
 
 import com.github.hsindumas.redis.lock.enums.LockModel;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
