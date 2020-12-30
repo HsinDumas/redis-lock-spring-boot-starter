@@ -69,3 +69,7 @@ lock:
 ## 反馈建议
 
 如有任何问题，欢迎提issue。
+
+## 鸣谢
+- 感谢 JetBrains 提供的免费开源 License：
+<img src="https://images.gitee.com/uploads/images/2020/0406/220236_f5275c90_5531506.png" alt="图片引用自lets-mica" style="float:left;">
