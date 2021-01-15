@@ -9,7 +9,8 @@
 
 本插件是以AOP的形式加上redisson的封装实现。
 
-**`redis-lock-spring-boot-starter`将`redisson`与`spring-boot`框架整合，目的是为了给`spring-boot`开发者提供`最简单`的基于redis的分布式锁**。
+**`redis-lock-spring-boot-starter`将`redisson`与`spring-boot`框架整合，目的是为了给`spring-boot`开发者提供`最简单`
+的基于redis的分布式锁**。
 
 🚀项目持续优化迭代，欢迎大家提ISSUE和PR！麻烦大家能给一颗star✨，您的star是我们持续更新的动力！
 
@@ -32,9 +33,9 @@
 ```xml
 <!-- https://mvnrepository.com/artifact/com.github.hsindumas/redis-lock-spring-boot-starter -->
 <dependency>
-    <groupId>com.github.hsindumas</groupId>
-    <artifactId>redis-lock-spring-boot-starter</artifactId>
-    <version>1.1.5</version>
+  <groupId>com.github.hsindumas</groupId>
+  <artifactId>redis-lock-spring-boot-starter</artifactId>
+  <version>1.1.6</version>
 </dependency>
 ```
 
@@ -42,7 +43,7 @@
 
 ```groovy
 // https://mvnrepository.com/artifact/com.github.hsindumas/redis-lock-spring-boot-starter
-compile group: 'com.github.hsindumas', name: 'redis-lock-spring-boot-starter', version: '1.1.5'
+compile group: 'com.github.hsindumas', name: 'redis-lock-spring-boot-starter', version: '1.1.6'
 ```
 
 ### 配置redis
@@ -71,5 +72,6 @@ lock:
 如有任何问题，欢迎提issue。
 
 ## 鸣谢
+
 - 感谢 JetBrains 提供的免费开源 License：
-<img src="https://images.gitee.com/uploads/images/2020/0406/220236_f5275c90_5531506.png" alt="图片引用自lets-mica" style="float:left;">
+  <img src="https://images.gitee.com/uploads/images/2020/0406/220236_f5275c90_5531506.png" alt="图片引用自lets-mica" style="float:left;">
