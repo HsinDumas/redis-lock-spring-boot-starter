@@ -42,6 +42,11 @@ public class LockAop {
   private final LockProperties lockProperties;
   @Resource private RedissonClient redissonClient;
 
+  /**
+   * Lock aspect.
+   *
+   * @param lock the lock
+   */
   @Pointcut("@annotation(lock)")
   public void lockAspect(Lock lock) {}
 
@@ -78,6 +83,14 @@ public class LockAop {
     return keys;
   }
 
+  /**
+   * Around advice object.
+   *
+   * @param proceedingJoinPoint the proceeding join point
+   * @param lock the lock
+   * @return the object
+   * @throws Throwable the throwable
+   */
   @Around(value = "lockAspect(lock)", argNames = "proceedingJoinPoint,lock")
   public Object aroundAdvice(ProceedingJoinPoint proceedingJoinPoint, Lock lock) throws Throwable {
     String[] keys = lock.keys();

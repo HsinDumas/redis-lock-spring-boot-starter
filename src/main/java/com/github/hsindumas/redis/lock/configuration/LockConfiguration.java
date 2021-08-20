@@ -21,6 +21,11 @@ public class LockConfiguration {
 
   private final LockProperties lockProperties;
 
+  /**
+   * Lock aop lock aop.
+   *
+   * @return the lock aop
+   */
   @Bean
   @ConditionalOnMissingBean(LockAop.class)
   public LockAop lockAop() {
