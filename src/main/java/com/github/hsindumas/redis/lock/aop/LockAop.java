@@ -70,7 +70,7 @@ public class LockAop {
             keys.add(REDIS_LOCK_PREFIX + o.toString() + keyConstant);
           }
         } else {
-          keys.add(REDIS_LOCK_PREFIX + value.toString() + keyConstant);
+          keys.add(REDIS_LOCK_PREFIX + value + keyConstant);
         }
       }
     }

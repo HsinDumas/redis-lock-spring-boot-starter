@@ -4,7 +4,7 @@
 [![Maven central](https://maven-badges.herokuapp.com/maven-central/com.github.hsindumas/redis-lock-spring-boot-starter/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.lianjiatech/retrofit-spring-boot-starter)
 [![GitHub release](https://img.shields.io/github/v/release/HsinDumas/redis-lock-spring-boot-starter.svg)](https://github.com/HsinDumas/redis-lock-spring-boot-starter/releases)
 [![License](https://img.shields.io/badge/JDK-1.8+-4EB1BA.svg)](https://docs.oracle.com/javase/8/docs/index.html)
-[![License](https://img.shields.io/badge/SpringBoot-2.x+-green.svg)](https://docs.spring.io/spring-boot/docs/2.3.4.RELEASE/reference/htmlsingle/)
+[![License](https://img.shields.io/badge/SpringBoot-2.x+-green.svg)](https://docs.spring.io/spring-boot/docs/2.5.4/reference/htmlsingle/)
 [![Author](https://img.shields.io/badge/Author-ZhongXin-red.svg?style=flat-square)](https://juejin.im/user/3562073404738584/posts)
 
 本插件是以AOP的形式加上redisson的封装实现。
@@ -12,7 +12,7 @@
 **`redis-lock-spring-boot-starter`将`redisson`与`spring-boot`框架整合，目的是为了给`spring-boot`开发者提供`最简单`
 的基于redis的分布式锁**。
 
-🚀项目持续优化迭代，欢迎大家提ISSUE和PR！麻烦大家能给一颗star✨，您的star是我们持续更新的动力！
+🚀项目持续优化迭代，欢迎大家提ISSUE和PR！麻烦大家能给一颗star✨，您的star是我持续更新的动力！
 
 <!--more-->
 
@@ -35,7 +35,7 @@
 <dependency>
   <groupId>com.github.hsindumas</groupId>
   <artifactId>redis-lock-spring-boot-starter</artifactId>
-  <version>1.1.6</version>
+  <version>1.1.7</version>
 </dependency>
 ```
 
@@ -43,7 +43,7 @@
 
 ```groovy
 // https://mvnrepository.com/artifact/com.github.hsindumas/redis-lock-spring-boot-starter
-compile group: 'com.github.hsindumas', name: 'redis-lock-spring-boot-starter', version: '1.1.6'
+compile group: 'com.github.hsindumas', name: 'redis-lock-spring-boot-starter', version: '1.1.7'
 ```
 
 ### 配置redis
@@ -52,7 +52,7 @@ compile group: 'com.github.hsindumas', name: 'redis-lock-spring-boot-starter', v
 
 ### 使用
 
-在需要枷锁的方法上添加@Lock注释，设置好key，作为redis的key
+在需要加锁的方法上添加@Lock注释，设置好key，作为redis的key
 
 ```java
 @Lock(keys = "test")
