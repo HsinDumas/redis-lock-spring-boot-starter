@@ -7,7 +7,7 @@ package com.github.hsindumas.redis.lock.excepiton;
  */
 public class LockException extends RuntimeException {
 
-  private static final long serialVersionUID = -2918683545881374966L;
+  private static final long serialVersionUID = 1L;
 
   /**
    * Instantiates a new Lock exception.
