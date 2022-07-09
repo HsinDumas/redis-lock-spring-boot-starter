@@ -120,33 +120,31 @@ public class LockAop {
         if (lockModel != LockModel.MULTIPLE && lockModel != LockModel.RED_LOCK && keys.length > 1) {
             throw new RuntimeException("the lock mode " + lockModel.name() + " should have a single parameter");
         }
-        log.info("lock model {}.waitTime {}.lockTime {}", lockModel.name(), waitTime, lockTime);
         RLock rLock;
+        List<String> lockKeys = null;
         switch (lockModel) {
             case FAIR:
-                rLock = redissonClient.getFairLock(getValueBySpel(keys[0], parameterNames, args, lock.keyConstant())
-                        .get(0));
+                lockKeys = getValueBySpel(keys[0], parameterNames, args, lock.keyConstant());
+                rLock = redissonClient.getFairLock(lockKeys.get(0));
                 break;
             case RED_LOCK:
                 List<RLock> rLocks = new ArrayList<>();
                 for (String key : keys) {
-                    rLocks.addAll(getValueBySpel(key, parameterNames, args, lock.keyConstant()).stream()
-                            .map(redissonClient::getLock)
-                            .collect(Collectors.toList()));
+                    lockKeys = getValueBySpel(key, parameterNames, args, lock.keyConstant());
+                    rLocks.addAll(lockKeys.stream().map(redissonClient::getLock).collect(Collectors.toList()));
                 }
                 rLock = new RedissonRedLock(rLocks.toArray(new RLock[0]));
                 break;
             case MULTIPLE:
                 rLocks = new ArrayList<>();
                 for (String key : keys) {
-                    rLocks.addAll(getValueBySpel(key, parameterNames, args, lock.keyConstant()).stream()
-                            .map(redissonClient::getLock)
-                            .collect(Collectors.toList()));
+                    lockKeys = getValueBySpel(key, parameterNames, args, lock.keyConstant());
+                    rLocks.addAll(lockKeys.stream().map(redissonClient::getLock).collect(Collectors.toList()));
                 }
                 rLock = new RedissonMultiLock(rLocks.toArray(new RLock[0]));
                 break;
             case REENTRANT:
-                List<String> lockKeys = getValueBySpel(keys[0], parameterNames, args, lock.keyConstant());
+                lockKeys = getValueBySpel(keys[0], parameterNames, args, lock.keyConstant());
                 if (lockKeys.size() == 1) {
                     rLock = redissonClient.getLock(lockKeys.get(0));
                     break;
@@ -155,24 +153,26 @@ public class LockAop {
                         lockKeys.stream().map(redissonClient::getLock).toArray(RLock[]::new));
                 break;
             case READ:
-                rLock = redissonClient
-                        .getReadWriteLock(getValueBySpel(keys[0], parameterNames, args, lock.keyConstant())
-                                .get(0))
-                        .readLock();
+                lockKeys = getValueBySpel(keys[0], parameterNames, args, lock.keyConstant());
+                rLock = redissonClient.getReadWriteLock(lockKeys.get(0)).readLock();
                 break;
             case WRITE:
-                rLock = redissonClient
-                        .getReadWriteLock(getValueBySpel(keys[0], parameterNames, args, lock.keyConstant())
-                                .get(0))
-                        .writeLock();
+                lockKeys = getValueBySpel(keys[0], parameterNames, args, lock.keyConstant());
+                rLock = redissonClient.getReadWriteLock(lockKeys.get(0)).writeLock();
                 break;
             default:
                 throw new LockException("lock model " + lockModel.name() + " is not supported");
         }
 
         if (rLock == null) {
-            throw new LockException("can not acquire the lock");
+            throw new LockException("can not init the lock");
         }
+        log.info(
+                "prepare to acquire the {} lock with {}. WaitTime [{}]. LockTime [{}]",
+                lockModel.name(),
+                lockKeys,
+                waitTime,
+                lockTime);
 
         boolean res = false;
         try {
