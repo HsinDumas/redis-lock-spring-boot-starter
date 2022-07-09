@@ -19,16 +19,16 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(LockProperties.class)
 public class LockConfiguration {
 
-  private final LockProperties lockProperties;
+    private final LockProperties lockProperties;
 
-  /**
-   * Lock aop lock aop.
-   *
-   * @return the lock aop
-   */
-  @Bean
-  @ConditionalOnMissingBean(LockAop.class)
-  public LockAop lockAop() {
-    return new LockAop(lockProperties);
-  }
+    /**
+     * Lock aop lock aop.
+     *
+     * @return the lock aop
+     */
+    @Bean
+    @ConditionalOnMissingBean(LockAop.class)
+    public LockAop lockAop() {
+        return new LockAop(lockProperties);
+    }
 }

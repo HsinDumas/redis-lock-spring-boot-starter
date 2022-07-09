@@ -10,8 +10,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 @ConfigurationProperties(prefix = "lock")
 public class LockProperties {
-  /** 锁超时时间(毫秒) */
-  private Long lockTime = 30000L;
-  /** 等待加锁超时时间(毫秒) -1则一直等待 */
-  private Long waitTime = 10000L;
+    /** 锁超时时间(毫秒) */
+    private Long lockTime = 30000L;
+    /** 等待加锁超时时间(毫秒) -1则一直等待 */
+    private Long waitTime = 10000L;
 }

@@ -7,14 +7,14 @@ package com.github.hsindumas.redis.lock.excepiton;
  */
 public class LockException extends RuntimeException {
 
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  /**
-   * Instantiates a new Lock exception.
-   *
-   * @param message the message
-   */
-  public LockException(String message) {
-    super(message);
-  }
+    /**
+     * Instantiates a new Lock exception.
+     *
+     * @param message the message
+     */
+    public LockException(String message) {
+        super(message);
+    }
 }
