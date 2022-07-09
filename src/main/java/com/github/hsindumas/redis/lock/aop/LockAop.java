@@ -23,7 +23,6 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -40,8 +39,7 @@ import java.util.stream.Collectors;
 public class LockAop {
     private final LockProperties lockProperties;
 
-    @Resource
-    private RedissonClient redissonClient;
+    private final RedissonClient redissonClient;
 
     /**
      * Lock aspect.
