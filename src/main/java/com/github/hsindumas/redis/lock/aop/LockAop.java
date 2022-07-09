@@ -79,7 +79,6 @@ public class LockAop {
                 }
             }
         }
-        log.info("keys for lock {}", keys);
         return keys;
     }
 
