@@ -38,8 +38,6 @@ import java.util.stream.Collectors;
 @Order(-10)
 @RequiredArgsConstructor
 public class LockAop {
-    private static final String REDIS_LOCK_PREFIX = "lock:";
-
     private final LockProperties lockProperties;
 
     @Resource
@@ -56,7 +54,7 @@ public class LockAop {
     private List<String> getValueBySpel(String key, String[] parameterNames, Object[] values, String keyConstant) {
         List<String> keys = new ArrayList<>();
         if (!key.contains("#")) {
-            keys.add(REDIS_LOCK_PREFIX + key + keyConstant);
+            keys.add(key + keyConstant);
         } else {
             ExpressionParser parser = new SpelExpressionParser();
             EvaluationContext context = new StandardEvaluationContext();
@@ -69,15 +67,15 @@ public class LockAop {
                 if (value instanceof List) {
                     List<?> value1 = (List<?>) value;
                     for (Object o : value1) {
-                        keys.add(REDIS_LOCK_PREFIX + o.toString() + keyConstant);
+                        keys.add(o.toString() + keyConstant);
                     }
                 } else if (value.getClass().isArray()) {
                     Object[] obj = (Object[]) value;
                     for (Object o : obj) {
-                        keys.add(REDIS_LOCK_PREFIX + o.toString() + keyConstant);
+                        keys.add(o.toString() + keyConstant);
                     }
                 } else {
-                    keys.add(REDIS_LOCK_PREFIX + value + keyConstant);
+                    keys.add(value + keyConstant);
                 }
             }
         }
