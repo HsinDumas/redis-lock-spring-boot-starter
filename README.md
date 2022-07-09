@@ -35,7 +35,7 @@
 <dependency>
     <groupId>com.github.hsindumas</groupId>
     <artifactId>redis-lock-spring-boot-starter</artifactId>
-    <version>1.1.9</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
@@ -43,7 +43,7 @@
 
 ```groovy
 // https://mvnrepository.com/artifact/com.github.hsindumas/redis-lock-spring-boot-starter
-compile group: 'com.github.hsindumas', name: 'redis-lock-spring-boot-starter', version: '1.1.9'
+compile group: 'com.github.hsindumas', name: 'redis-lock-spring-boot-starter', version: '1.2.0'
 ```
 
 ### 配置redis
